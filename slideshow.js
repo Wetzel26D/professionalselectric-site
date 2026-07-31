@@ -224,7 +224,11 @@
     if (!form) return;
     const params = new URLSearchParams(location.search);
     const next = form.querySelector('input[name="_next"]');
-    if (next) next.value = `${location.origin}/thanks.html`;
+    const sourceUrl = form.querySelector('input[name="_url"]');
+    if (location.protocol === 'http:' || location.protocol === 'https:') {
+      if (next) next.value = new URL('thanks.html', location.href).href;
+      if (sourceUrl) sourceUrl.value = new URL('contact.html', location.href).href;
+    }
 
     const service = form.elements.service;
     const property = form.elements['property-type'];
@@ -255,6 +259,13 @@
     form.addEventListener('submit', () => {
       const subject = form.querySelector('input[name="_subject"]');
       if (subject && service?.value) subject.value = `New ${service.value} request - Professionals Electric`;
+      const submitButton = form.querySelector('[data-submit-button]');
+      const status = form.querySelector('[data-form-status]');
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Sending request…';
+      }
+      if (status) status.textContent = 'Securely sending your request. Please wait…';
       recordLocalInteraction('form_submit');
     });
   }
