@@ -54,8 +54,8 @@
     <section class="section contact-section">
       <div class="wrap contact-grid">
         <div><h2>Send job details.</h2><p>Requests go directly to Professionals Electric. A team member will review the scope and follow up using the contact information you provide.</p><p>For commercial, contractor, and facility work, include the company or property, access notes, deadline, inspection date, and plans when available.</p><div class="contact-lines"><a href="tel:6577745017"><span>Phone</span><strong>657-774-5017</strong></a><a href="sms:6577745017"><span>Text</span><strong>657-774-5017</strong></a><a href="mailto:shawn@professionalselectric.com"><span>Email</span><strong>shawn@professionalselectric.com</strong></a></div></div>
-        <form class="form" action="https://formsubmit.co/shawn@professionalselectric.com" method="post" enctype="multipart/form-data" data-estimate-form>
-          <input type="hidden" name="_subject" value="New Professionals Electric service request"><input type="hidden" name="_template" value="table"><input type="hidden" name="_next" value="https://professionalselectric.com/thanks.html"><input type="hidden" name="_url" value="https://professionalselectric.com/contact.html"><input type="text" name="_honey" class="form-honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <form class="form" action="/api/submit-request" method="post" data-estimate-form>
+          <input type="text" name="website" class="form-honey" tabindex="-1" autocomplete="off" aria-hidden="true">
           <label class="form-half">Name<input name="name" autocomplete="name" required></label>
           <label class="form-half">Phone<input name="phone" type="tel" autocomplete="tel" required></label>
           <label class="form-half">Email<input name="email" type="email" autocomplete="email"></label>
@@ -72,13 +72,13 @@
             <label class="form-half">Plans or scope available?<select name="plans-available"><option>No</option><option>Yes</option><option>Not sure</option></select></label>
             <label class="form-half">Shutdown may be needed?<select name="shutdown-needed"><option>Not sure</option><option>No</option><option>Yes</option></select></label>
           </div>
-          <fieldset class="photo-attachments"><legend>Attach project photos</legend><p>Panel, equipment, room, parking location, plans, or problem area. Add up to 3 images, 10 MB combined.</p><label>Photo 1<input name="attachment-1" type="file" accept="image/jpeg,image/png,image/webp"></label><label>Photo 2<input name="attachment-2" type="file" accept="image/jpeg,image/png,image/webp"></label><label>Photo 3<input name="attachment-3" type="file" accept="image/jpeg,image/png,image/webp"></label></fieldset>
+          <fieldset class="photo-attachments"><legend>Attach project photos</legend><p>Panel, equipment, room, parking location, plans, or problem area. Add up to 5 photos, 25 MB each and 100 MB total. Photos are stored privately.</p><label>Choose photos<input name="photos" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" multiple data-photo-input></label><p class="file-summary" data-file-summary aria-live="polite">No photos selected.</p><progress class="upload-progress" data-upload-progress max="100" value="0" hidden>0%</progress></fieldset>
           <label class="form-half">Urgent?<select name="urgent"><option>No</option><option>Yes</option></select></label>
           <label class="form-half">Project timing<select name="project-timing"><option>Flexible</option><option>As soon as scheduling allows</option><option>Within 1–2 weeks</option><option>Within 30 days</option><option>Planning ahead</option></select></label>
           <label>Best contact time<input name="best-contact-time"></label>
           <button class="btn btn-primary" type="submit" data-submit-button>Send request</button>
           <p class="form-status" data-form-status role="status" aria-live="polite"></p>
-          <small class="form-note">After you press Send request, complete the security check if one appears. For active fire, smoke, or immediate danger, call emergency services first.</small>
+          <small class="form-note">Your details and private photo links are sent directly to the Professionals Electric team. For active fire, smoke, or immediate danger, call emergency services first. See our <a href="privacy.html">privacy policy</a>.</small>
         </form>
       </div>
     </section>
@@ -93,6 +93,7 @@
     </div>
   </footer>
   <div class="mobile-call"><a href="tel:6577745017">Call Professionals Electric: 657-774-5017</a></div>
-  <script src="slideshow.js?v=11" defer></script>
+  <script src="slideshow.js?v=12" defer></script>
+  <script src="form-client.min.js?v=1" defer></script>
 </body>
 </html>

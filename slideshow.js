@@ -220,16 +220,9 @@
   }
 
   function prepareEstimateForm() {
-    const form = document.querySelector('form[action*="formsubmit.co"]');
+    const form = document.querySelector('[data-estimate-form]');
     if (!form) return;
     const params = new URLSearchParams(location.search);
-    const next = form.querySelector('input[name="_next"]');
-    const sourceUrl = form.querySelector('input[name="_url"]');
-    if (location.protocol === 'http:' || location.protocol === 'https:') {
-      if (next) next.value = new URL('thanks.html', location.href).href;
-      if (sourceUrl) sourceUrl.value = new URL('contact.html', location.href).href;
-    }
-
     const service = form.elements.service;
     const property = form.elements['property-type'];
     if (params.get('service') && service) service.value = params.get('service');
@@ -247,27 +240,6 @@
     property?.addEventListener('change', updateCommercialFields);
     updateCommercialFields();
 
-    const attachments = [...form.querySelectorAll('input[type="file"]')];
-    const validateAttachments = () => {
-      const totalSize = attachments.reduce((total, input) => total + [...input.files].reduce((sum, file) => sum + file.size, 0), 0);
-      const tooLarge = totalSize > 10 * 1024 * 1024;
-      attachments.forEach((input) => input.setCustomValidity(tooLarge ? 'Please keep all attached photos under 10 MB combined.' : ''));
-      if (tooLarge) attachments[0].reportValidity();
-    };
-    attachments.forEach((input) => input.addEventListener('change', validateAttachments));
-
-    form.addEventListener('submit', () => {
-      const subject = form.querySelector('input[name="_subject"]');
-      if (subject && service?.value) subject.value = `New ${service.value} request - Professionals Electric`;
-      const submitButton = form.querySelector('[data-submit-button]');
-      const status = form.querySelector('[data-form-status]');
-      if (submitButton) {
-        submitButton.disabled = true;
-        submitButton.textContent = 'Sending request…';
-      }
-      if (status) status.textContent = 'Securely sending your request. Please wait…';
-      recordLocalInteraction('form_submit');
-    });
   }
 
   function enablePrivacyFriendlyTracking() {

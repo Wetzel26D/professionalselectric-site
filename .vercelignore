@@ -1,0 +1,15 @@
+.env*
+.agents
+.playwright-cli
+.DS_Store
+node_modules
+*.zip
+*.map
+professionals-electric-full-logo-pack
+professionals-electric-github-pages-ready
+professionals-electric-shirt-logo-pack
+professionals-electric-website-ready-v2
+logo-pack-shirts
+tools
+professionals-electric-website-case-study.md
+form-client.js

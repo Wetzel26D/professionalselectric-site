@@ -311,10 +311,14 @@ textarea { min-height: 140px; resize: vertical; }
 .form-honey { position: absolute !important; left: -9999px !important; width: 1px !important; height: 1px !important; opacity: 0 !important; }
 .form-note { display: block; color: #555; line-height: 1.45; }
 .form-status { grid-column: 1 / -1; min-height: 1.4em; margin: -5px 0 0; color: #66440c; font-size: 14px; font-weight: 800; }
+.form-status[data-kind="success"] { color: #1f6b36; }
+.form-status[data-kind="error"], .file-summary[data-kind="error"] { color: #a02b21; }
 .photo-attachments { display: grid; gap: 12px; margin: 0; padding: 16px; border: 1px solid var(--line); background: var(--cream); }
 .photo-attachments legend { padding: 0 7px; color: #111; font-weight: 900; }
 .photo-attachments p { margin: 0; color: #555; font-size: 13px; line-height: 1.4; }
 .photo-attachments input[type="file"] { height: auto; padding: 12px; border: 1px dashed #aa9b7e; cursor: pointer; }
+.file-summary { font-weight: 800; }
+.upload-progress { width: 100%; height: 13px; accent-color: var(--gold); }
 .form-section-label { grid-column: 1 / -1; margin: 8px 0 -3px; color: #785112; font-size: 13px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
 .commercial-fields { display: contents; }
 .commercial-fields[hidden] { display: none; }
