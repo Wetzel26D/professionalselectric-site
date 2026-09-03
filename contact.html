@@ -48,7 +48,7 @@
       </div>
     </div>
   </header>
-  <main id="main">
+  <main id="main" tabindex="-1">
     <section class="subhero hero-photo-cycle" data-hero-slideshow><div class="wrap"><p class="kicker">Contact</p><h1>Tell our team what you need.</h1><p class="lead">Call, text, or send the form with your name, phone, job address, a short description, urgency, and photos if available.</p></div></section>
 
     <section class="section contact-section">
@@ -56,29 +56,30 @@
         <div><h2>Send job details.</h2><p>Requests go directly to Professionals Electric. A team member will review the scope and follow up using the contact information you provide.</p><p>For commercial, contractor, and facility work, include the company or property, access notes, deadline, inspection date, and plans when available.</p><div class="contact-lines"><a href="tel:6577745017"><span>Phone</span><strong>657-774-5017</strong></a><a href="sms:6577745017"><span>Text</span><strong>657-774-5017</strong></a><a href="mailto:shawn@professionalselectric.com"><span>Email</span><strong>shawn@professionalselectric.com</strong></a></div></div>
         <form class="form" action="/api/submit-request" method="post" data-estimate-form>
           <input type="text" name="website" class="form-honey" tabindex="-1" autocomplete="off" aria-hidden="true">
-          <label class="form-half">Name<input name="name" autocomplete="name" required></label>
+          <label class="form-half">Name<input name="name" type="text" autocomplete="name" required></label>
           <label class="form-half">Phone<input name="phone" type="tel" autocomplete="tel" required></label>
           <label class="form-half">Email<input name="email" type="email" autocomplete="email"></label>
-          <label class="form-half">Job address<input name="job-address" autocomplete="street-address"></label>
+          <label class="form-half">Job address<input name="job-address" type="text" autocomplete="address-line1"></label>
           <label class="form-half">Service<select name="service" required><option value="">Choose one</option><option>Residential electrical</option><option>Commercial electrical</option><option>Industrial electrical</option><option>Panel work</option><option>EV prep</option><option>Urgent electrical issue</option></select></label>
           <label class="form-half">Property type<select name="property-type"><option>Home</option><option>Business or retail</option><option>Industrial facility</option><option>Property management</option><option>Construction or remodel</option><option>Other</option></select></label>
           <label>What needs to be repaired, installed, or reviewed?<textarea name="message" rows="5" required placeholder="Describe what is happening, what changed, or what the project needs."></textarea></label>
           <div class="commercial-fields" data-commercial-fields hidden>
             <p class="form-section-label">Commercial, contractor, or facility details</p>
-            <label class="form-half">Company or property name<input name="company-property" autocomplete="organization"></label>
-            <label class="form-half">Your role<input name="contact-role" placeholder="Owner, manager, contractor, facility team…"></label>
-            <label>Deadline or inspection date<input name="deadline-inspection" placeholder="Include a firm date if one applies."></label>
+            <label class="form-half">Company or property name<input name="company-property" type="text" autocomplete="organization"></label>
+            <label class="form-half">Your role<input name="contact-role" type="text" placeholder="Owner, manager, contractor, facility team…"></label>
+            <label>Deadline or inspection date<input name="deadline-inspection" type="text" placeholder="Include a firm date if one applies."></label>
             <label>Access, parking, shutdown, or coordination notes<textarea name="access-coordination" rows="3"></textarea></label>
             <label class="form-half">Plans or scope available?<select name="plans-available"><option>No</option><option>Yes</option><option>Not sure</option></select></label>
             <label class="form-half">Shutdown may be needed?<select name="shutdown-needed"><option>Not sure</option><option>No</option><option>Yes</option></select></label>
           </div>
-          <fieldset class="photo-attachments"><legend>Attach project photos</legend><p>Panel, equipment, room, parking location, plans, or problem area. Add up to 5 photos, 25 MB each and 100 MB total. Photos are stored privately.</p><label>Choose photos<input name="photos" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" multiple data-photo-input></label><p class="file-summary" data-file-summary aria-live="polite">No photos selected.</p><progress class="upload-progress" data-upload-progress max="100" value="0" hidden>0%</progress></fieldset>
+          <fieldset class="photo-attachments"><legend>Attach project photos</legend><p>Panel, equipment, room, parking location, plans, or problem area. Add up to 5 photos, 25 MB each and 100 MB total. Photos are stored privately.</p><label>Choose photos<input name="photos" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" multiple data-photo-input></label><p class="file-summary" data-file-summary aria-live="polite" aria-atomic="true">No photos selected.</p><span class="visually-hidden" id="upload-progress-label">Photo upload progress</span><progress class="upload-progress" data-upload-progress aria-labelledby="upload-progress-label" max="100" value="0" hidden>0%</progress></fieldset>
           <label class="form-half">Urgent?<select name="urgent"><option>No</option><option>Yes</option></select></label>
           <label class="form-half">Project timing<select name="project-timing"><option>Flexible</option><option>As soon as scheduling allows</option><option>Within 1–2 weeks</option><option>Within 30 days</option><option>Planning ahead</option></select></label>
-          <label>Best contact time<input name="best-contact-time"></label>
+          <label>Best contact time<input name="best-contact-time" type="text"></label>
+          <label class="form-consent"><input type="checkbox" name="terms-accepted" value="Yes" required><span>I agree to the <a href="terms.html" target="_blank" rel="noopener">Website Terms</a> and acknowledge the <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>. <strong>(Required)</strong></span></label>
           <button class="btn btn-primary" type="submit" data-submit-button>Send request</button>
-          <p class="form-status" data-form-status role="status" aria-live="polite"></p>
-          <small class="form-note">Your details and private photo links are sent directly to the Professionals Electric team. For active fire, smoke, or immediate danger, call emergency services first. See our <a href="privacy.html">privacy policy</a>.</small>
+          <p class="form-status" data-form-status role="status" aria-live="polite" aria-atomic="true"></p>
+          <small class="form-note">Your details and private photo links are sent directly to the Professionals Electric team. For active fire, smoke, or immediate danger, call emergency services first.</small>
         </form>
       </div>
     </section>
@@ -86,14 +87,15 @@
   </main>
 
   <footer class="footer">
-    <div class="wrap footer-grid">
-      <img src="logo-primary-v3.png" width="480" height="480" alt="Professionals Electric logo">
-      <span>© 2026 Professionals Electric LLC</span>
-      <span>Orange County electrical services</span>
+    <div class="wrap footer-expanded">
+      <div class="footer-brand"><img src="logo-primary-v3.png" width="480" height="480" alt="Professionals Electric"><p>Residential, commercial, and industrial electrical services across Orange County.</p></div>
+      <nav aria-label="Footer navigation"><strong>Company</strong><a href="about.html">About Our Team</a><a href="gallery.html">Project Gallery</a><a href="project-highlights.html">Field Work Highlights</a><a href="service-areas.html">Service Areas</a><a href="contact.html">Request an Estimate</a></nav>
+      <div><strong>Contact</strong><a href="tel:6577745017">657-774-5017</a><a href="sms:6577745017">Text the team</a><a href="mailto:shawn@professionalselectric.com">shawn@professionalselectric.com</a><span>Orange County, California</span><a href="https://www.google.com/maps/search/?api=1&amp;query=Professionals%20Electric%20LLC%20Orange%20County%20CA" target="_blank" rel="noopener">Find Professionals Electric on Google</a></div>
     </div>
+    <div class="wrap footer-bottom"><span>© 2026 Professionals Electric LLC</span><nav aria-label="Legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="accessibility.html">Accessibility</a></nav></div>
   </footer>
   <div class="mobile-call"><a href="tel:6577745017">Call Professionals Electric: 657-774-5017</a></div>
-  <script src="slideshow.js?v=12" defer></script>
-  <script src="form-client.min.js?v=1" defer></script>
+  <script src="slideshow.js?v=13" defer></script>
+  <script src="form-client.min.js?v=2" defer></script>
 </body>
 </html>

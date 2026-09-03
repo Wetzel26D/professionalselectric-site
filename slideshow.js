@@ -96,9 +96,9 @@
     if (!footer || footer.querySelector('.footer-expanded')) return;
     footer.innerHTML = `<div class="wrap footer-expanded">
       <div class="footer-brand"><img src="logo-primary-v3.png" width="480" height="480" alt="Professionals Electric logo"><p>Residential, commercial, and industrial electrical services across Orange County.</p></div>
-      <nav aria-label="Footer navigation"><strong>Company</strong><a href="about.html">About Our Team</a><a href="gallery.html">Project Gallery</a><a href="project-highlights.html">Field Work Highlights</a><a href="service-areas.html">Service Areas</a><a href="contact.html">Request an Estimate</a><a href="privacy.html">Privacy</a></nav>
+      <nav aria-label="Footer navigation"><strong>Company</strong><a href="about.html">About Our Team</a><a href="gallery.html">Project Gallery</a><a href="project-highlights.html">Field Work Highlights</a><a href="service-areas.html">Service Areas</a><a href="contact.html">Request an Estimate</a></nav>
       <div><strong>Contact</strong><a href="tel:6577745017">657-774-5017</a><a href="sms:6577745017">Text the team</a><a href="mailto:shawn@professionalselectric.com">shawn@professionalselectric.com</a><span>Orange County, California</span><a href="https://www.google.com/maps/search/?api=1&query=Professionals%20Electric%20LLC%20Orange%20County%20CA" target="_blank" rel="noopener">Find Professionals Electric on Google</a></div>
-    </div><div class="wrap footer-bottom">© 2026 Professionals Electric LLC</div>`;
+    </div><div class="wrap footer-bottom"><span>© 2026 Professionals Electric LLC</span><nav aria-label="Legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="accessibility.html">Accessibility</a></nav></div>`;
   }
 
   function buildGalleryViewer() {
@@ -255,10 +255,32 @@
     });
   }
 
-  function closeMobileMenuAfterSelection() {
+  function prepareMobileMenu() {
     const toggle = document.querySelector('.menu-toggle');
-    if (!toggle) return;
-    document.querySelectorAll('.main-nav a').forEach((link) => link.addEventListener('click', () => { toggle.checked = false; }));
+    const navigation = document.querySelector('.main-nav');
+    if (!toggle || !navigation) return;
+    navigation.id ||= 'main-navigation';
+    toggle.setAttribute('aria-controls', navigation.id);
+    const updateState = () => toggle.setAttribute('aria-label', toggle.checked ? 'Close menu' : 'Open menu');
+    toggle.addEventListener('change', updateState);
+    document.querySelectorAll('.main-nav a').forEach((link) => link.addEventListener('click', () => {
+      toggle.checked = false;
+      updateState();
+    }));
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || !toggle.checked) return;
+      toggle.checked = false;
+      updateState();
+      toggle.focus();
+    });
+    updateState();
+  }
+
+  function markCurrentPage() {
+    const current = location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('.main-nav a, .footer-bottom a').forEach((link) => {
+      if ((link.getAttribute('href') || '').split('?')[0] === current) link.setAttribute('aria-current', 'page');
+    });
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -268,6 +290,7 @@
     buildServiceFinder();
     prepareEstimateForm();
     enablePrivacyFriendlyTracking();
-    closeMobileMenuAfterSelection();
+    prepareMobileMenu();
+    markCurrentPage();
   });
 })();

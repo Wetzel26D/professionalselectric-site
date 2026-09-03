@@ -56,8 +56,9 @@ p, li { line-height: 1.62; }
 }
 .lead, .page-intro { color: #4b4b4b; font-size: clamp(17px, 1.55vw, 21px); line-height: 1.55; }
 .lead { max-width: 720px; margin-bottom: 26px; }
-.skip-link { position: absolute; left: -9999px; top: 12px; z-index: 100; padding: 10px 14px; background: #000; color: #fff; }
-.skip-link:focus { left: 12px; }
+.skip-link { position: fixed; left: 12px; top: 12px; z-index: 1000; padding: 10px 14px; background: #000; color: #fff; transform: translateY(-180%); }
+.skip-link:focus { transform: translateY(0); }
+.visually-hidden { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; }
 :focus-visible { outline: 3px solid #f0b74f !important; outline-offset: 3px !important; }
 
 /* Header */
@@ -81,6 +82,7 @@ p, li { line-height: 1.62; }
 .menu-toggle { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 .hamburger { display: none; width: 44px; height: 40px; border: 1px solid #cfc8b8; border-radius: 4px; background: #fff; cursor: pointer; align-items: center; justify-content: center; flex-direction: column; gap: 5px; }
 .hamburger span { display: block; width: 22px; height: 2px; background: #111; }
+.menu-toggle:focus-visible + .hamburger { outline: 3px solid #f0b74f !important; outline-offset: 3px !important; }
 
 /* Buttons and actions */
 .btn { display: inline-flex; align-items: center; justify-content: center; min-width: 0; min-height: 48px; padding: 10px 18px; border: 2px solid transparent; border-radius: 3px; font-size: 14px; font-weight: 900; line-height: 1.18; letter-spacing: .035em; text-align: center; text-transform: uppercase; white-space: normal; transition: transform .16s ease, background .16s ease; }
@@ -324,7 +326,10 @@ textarea { min-height: 140px; resize: vertical; }
 .commercial-fields[hidden] { display: none; }
 .legal-page { max-width: 900px; margin: auto; }
 .legal-page h2 { margin-top: 30px; font-size: 25px; }
-.legal-page p { color: #444; font-size: 17px; }
+.legal-page h3 { margin-top: 22px; font-size: 19px; }
+.legal-page p, .legal-page li { color: #444; font-size: 17px; }
+.legal-page a { color: #684309; font-weight: 800; text-decoration: underline; text-decoration-thickness: .1em; text-underline-offset: .18em; }
+.legal-page li + li { margin-top: 7px; }
 .confirmation-page { display: grid; min-height: calc(100vh - 180px); place-items: center; background: var(--cream); }
 .confirmation-card { max-width: 780px; padding: clamp(28px, 6vw, 64px); border: 1px solid var(--line); border-top: 7px solid var(--gold); background: #fff; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.12); }
 .confirmation-check { display: grid; place-items: center; width: 68px; height: 68px; margin: 0 auto 18px; border-radius: 50%; background: var(--gold); color: #111; font-size: 38px; font-weight: 900; }
@@ -339,8 +344,26 @@ textarea { min-height: 140px; resize: vertical; }
 .footer-expanded a, .footer-expanded span, .footer-expanded p { color: #eee; }
 .footer-brand img, .footer > .footer-grid img { width: 180px; height: 110px; object-fit: contain; filter: drop-shadow(0 2px 5px rgba(0,0,0,.3)); }
 .footer-grid { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-block: 28px; font-size: 14px; font-weight: 700; }
-.footer-bottom { padding: 14px 0; border-top: 1px solid #333; color: #bbb; font-size: 13px; }
+.footer-bottom { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 14px 0; border-top: 1px solid #333; color: #bbb; font-size: 13px; }
+.footer-bottom nav { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.footer-bottom a { color: #eee; text-decoration: underline; text-underline-offset: 3px; }
+.footer-bottom a[aria-current="page"] { color: var(--gold); }
 .mobile-call { display: none; }
+
+/* Custom 404 */
+.not-found-page { min-height: calc(100vh - 170px); display: grid; align-items: center; background: radial-gradient(circle at 85% 12%, rgba(212,154,42,.18), transparent 28%), #111; color: #fff; }
+.not-found-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(290px, 390px); gap: clamp(32px, 6vw, 72px); align-items: center; }
+.not-found-page h1, .not-found-page h2 { color: #fff; }
+.not-found-page .lead { color: #e8e0d2; }
+.error-code { margin: 0 0 -12px; color: var(--gold); font-size: clamp(88px, 17vw, 190px); font-weight: 900; line-height: .8; letter-spacing: -.07em; }
+.not-found-links { padding: clamp(22px, 4vw, 34px); border: 1px solid #3c3c3c; border-top: 6px solid var(--gold); background: #1a1a1a; box-shadow: 0 18px 50px rgba(0,0,0,.28); }
+.not-found-links h2 { font-size: 27px; }
+.not-found-links a { display: block; min-height: 44px; padding: 10px 0; border-bottom: 1px solid #393939; color: #fff; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+.not-found-links a:last-child { border-bottom: 0; }
+
+.form-consent { grid-column: 1 / -1; display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 10px; align-items: start; padding: 14px; border: 1px solid var(--line); background: var(--cream); font-weight: 700; }
+.form-consent input { width: 20px; min-height: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--gold-dark); }
+.form-consent a { color: #684309; text-decoration: underline; text-underline-offset: 3px; }
 
 @media (max-width: 1180px) {
   .brand { min-width: 300px; }
@@ -430,6 +453,8 @@ textarea { min-height: 140px; resize: vertical; }
   .footer-brand { grid-column: auto; }
   .footer-brand img, .footer > .footer-grid img { width: 150px; height: 92px; }
   .footer-grid { align-items: flex-start; flex-direction: column; }
+  .footer-bottom { align-items: flex-start; flex-direction: column; }
+  .not-found-grid { grid-template-columns: 1fr; }
   .mobile-call { display: block; position: fixed; right: 0; bottom: 0; left: 0; z-index: 70; padding: 10px 12px max(10px, env(safe-area-inset-bottom)); background: #fff; box-shadow: 0 -4px 16px rgba(0,0,0,.18); }
   .mobile-call a { display: flex; align-items: center; justify-content: center; min-height: 50px; border-radius: 4px; background: var(--gold); color: #111; font-weight: 900; text-align: center; }
 }

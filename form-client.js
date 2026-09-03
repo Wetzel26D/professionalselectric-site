@@ -37,6 +37,8 @@ function startEstimateForm() {
   function setStatus(message, kind = '') {
     status.textContent = message;
     status.dataset.kind = kind;
+    status.setAttribute('role', kind === 'error' ? 'alert' : 'status');
+    status.setAttribute('aria-atomic', 'true');
   }
 
   function selectedFiles() {
@@ -70,6 +72,7 @@ function startEstimateForm() {
     const submissionId = crypto.randomUUID();
     const files = selectedFiles();
     submitButton.disabled = true;
+    form.setAttribute('aria-busy', 'true');
     submitButton.textContent = files.length ? 'Uploading photos…' : 'Sending request…';
     progress.hidden = files.length === 0;
     progress.value = 0;
@@ -87,6 +90,7 @@ function startEstimateForm() {
           clientPayload: JSON.stringify({ submissionId }),
           onUploadProgress: ({ percentage }) => {
             progress.value = index * 100 + Math.round(percentage || 0);
+            progress.setAttribute('aria-valuetext', `Uploading photo ${index + 1} of ${files.length}: ${Math.round(percentage || 0)} percent`);
           }
         });
         progress.value = (index + 1) * 100;
@@ -115,6 +119,7 @@ function startEstimateForm() {
         urgent: fields.get('urgent'),
         projectTiming: fields.get('project-timing'),
         bestContactTime: fields.get('best-contact-time'),
+        termsAccepted: fields.get('terms-accepted'),
         photos: uploadedPhotos
       };
 
@@ -128,12 +133,16 @@ function startEstimateForm() {
 
       recordSubmission();
       setStatus(`Request sent. Reference ${data.reference}.`, 'success');
+      form.setAttribute('aria-busy', 'false');
       location.assign(`thanks.html?ref=${encodeURIComponent(data.reference || '')}`);
     } catch (error) {
       console.error(error);
       setStatus(error?.message || 'The request could not be sent. Please call 657-774-5017.', 'error');
       submitButton.disabled = false;
       submitButton.textContent = 'Try sending again';
+      form.setAttribute('aria-busy', 'false');
+      status.tabIndex = -1;
+      status.focus();
     }
   });
 }

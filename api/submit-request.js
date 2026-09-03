@@ -51,12 +51,16 @@ export default async function handler(request, response) {
     const email = cleanText(body.email, 200);
     const service = cleanText(body.service, 120);
     const message = cleanText(body.message, 5000);
+    const termsAccepted = cleanText(body.termsAccepted, 10);
 
     if (!validSubmissionId(submissionId) || !name || !phone || !service || !message) {
       return response.status(400).json({ error: 'Please complete the required name, phone, service, and project details.' });
     }
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return response.status(400).json({ error: 'Please enter a valid email address.' });
+    }
+    if (termsAccepted !== 'Yes') {
+      return response.status(400).json({ error: 'Please agree to the Website Terms and acknowledge the Privacy Policy.' });
     }
 
     const incomingPhotos = Array.isArray(body.photos) ? body.photos.slice(0, MAX_PHOTOS) : [];
@@ -101,6 +105,8 @@ export default async function handler(request, response) {
       urgent: cleanText(body.urgent, 20),
       projectTiming: cleanText(body.projectTiming, 120),
       bestContactTime: cleanText(body.bestContactTime, 200),
+      termsAccepted: true,
+      termsVersion: '2026-09-03',
       photos,
       source: 'professionalselectric.com/contact.html'
     };
