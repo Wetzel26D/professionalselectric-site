@@ -25,13 +25,28 @@ async function sendLeadEmail(params, submissionId) {
   for (let attempt = 0; attempt < 3; attempt += 1) {
     const result = await resend.emails.send(params, { idempotencyKey });
     if (!result.error) return result;
-    const retryable = result.error.statusCode === 429 || result.error.statusCode >= 500;
+    const statusCode = Number(result.error.statusCode || 0);
+    const retryable = statusCode === 429 || statusCode >= 500 || ['rate_limit_exceeded', 'api_error'].includes(result.error.name);
     if (!retryable || attempt === 2) return result;
     await new Promise((resolve) => setTimeout(resolve, 500 * (2 ** attempt)));
   }
 }
 
+async function saveLead(lead, allowOverwrite = false) {
+  await put(`leads/${lead.id}.json`, JSON.stringify(lead), {
+    access: 'private',
+    contentType: 'application/json',
+    addRandomSuffix: false,
+    allowOverwrite
+  });
+}
+
+function requestId(request) {
+  return String(request.headers?.['x-vercel-id'] || request.headers?.get?.('x-vercel-id') || 'local');
+}
+
 export default async function handler(request, response) {
+  const startedAt = Date.now();
   if (request.method !== 'POST') {
     response.setHeader('Allow', 'POST');
     return response.status(405).json({ error: 'Method not allowed.' });
@@ -105,17 +120,16 @@ export default async function handler(request, response) {
       urgent: cleanText(body.urgent, 20),
       projectTiming: cleanText(body.projectTiming, 120),
       bestContactTime: cleanText(body.bestContactTime, 200),
+      serviceArea: cleanText(body.serviceArea, 120),
       termsAccepted: true,
       termsVersion: '2026-09-03',
       photos,
-      source: 'professionalselectric.com/contact.html'
+      teamNotification: { status: 'pending' },
+      customerConfirmation: { status: email ? 'pending' : 'not-requested' },
+      source: cleanText(body.sourcePage, 200) || '/contact.html'
     };
 
-    await put(`leads/${submissionId}.json`, JSON.stringify(lead), {
-      access: 'private',
-      contentType: 'application/json',
-      addRandomSuffix: false
-    });
+    await saveLead(lead);
 
     const siteOrigin = 'https://professionalselectric.com';
     const photoLinks = photos.map((photo, index) => ({
@@ -132,13 +146,14 @@ export default async function handler(request, response) {
       ['Company / property', lead.companyProperty], ['Contact role', lead.contactRole],
       ['Deadline / inspection', lead.deadlineInspection], ['Access / coordination', lead.accessCoordination],
       ['Plans available', lead.plansAvailable], ['Shutdown needed', lead.shutdownNeeded],
-      ['Urgent', lead.urgent], ['Project timing', lead.projectTiming], ['Best contact time', lead.bestContactTime]
+      ['Urgent', lead.urgent], ['Project timing', lead.projectTiming], ['Best contact time', lead.bestContactTime],
+      ['Service-area page', lead.serviceArea]
     ];
     const textRows = rows.filter(([, value]) => value).map(([label, value]) => `${label}: ${value}`).join('\n');
     const textLinks = photoLinks.map((photo, index) => `Photo ${index + 1} (${photo.originalName}): ${photo.href}`).join('\n');
     const domain = process.env.RESEND_EMAIL_DOMAIN || 'forms.professionalselectric.com';
 
-    const { error } = await sendLeadEmail({
+    const teamResult = await sendLeadEmail({
       from: `Professionals Electric Website <requests@${domain}>`,
       to: [process.env.LEADS_EMAIL || 'shawn@professionalselectric.com'],
       replyTo: email || undefined,
@@ -147,14 +162,45 @@ export default async function handler(request, response) {
       text: `New Professionals Electric website request\nReference: ${submissionId.slice(0, 8).toUpperCase()}\n\n${textRows}\n\n${textLinks || 'No photos attached.'}`
     }, submissionId);
 
-    if (error) {
-      console.error('Resend delivery error', error);
+    if (teamResult.error) {
+      lead.teamNotification = {
+        status: 'failed',
+        attemptedAt: new Date().toISOString(),
+        error: cleanText(teamResult.error.message || teamResult.error.name || 'Email service error', 300)
+      };
+      await saveLead(lead, true);
+      console.error(JSON.stringify({ level: 'error', msg: 'lead_notification_failed', route: '/api/submit-request', requestId: requestId(request), reference: submissionId.slice(0, 8).toUpperCase(), error: lead.teamNotification.error, ms: Date.now() - startedAt }));
       return response.status(502).json({ error: `Your details were saved as reference ${submissionId.slice(0, 8).toUpperCase()}, but the email notification could not be delivered. Please call 657-774-5017.` });
     }
 
+    lead.teamNotification = {
+      status: 'sent',
+      sentAt: new Date().toISOString(),
+      emailId: cleanText(teamResult.data?.id, 120)
+    };
+
+    if (email) {
+      const reference = submissionId.slice(0, 8).toUpperCase();
+      const customerResult = await sendLeadEmail({
+        from: `Professionals Electric <requests@${domain}>`,
+        to: [email],
+        replyTo: 'shawn@professionalselectric.com',
+        subject: `We received your Professionals Electric request — ${reference}`,
+        html: `<!doctype html><html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Professionals Electric request received</title></head><body style="margin:0;background:#f4f1e8"><div lang="en" dir="ltr" style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;padding:20px;color:#191919"><div style="background:#111;border-top:6px solid #d99d27;color:#fff;padding:22px"><h1 style="margin:0;font-size:24px;line-height:1.25">We received your electrical service request.</h1></div><div style="background:#fff;padding:24px"><p style="font-size:16px;line-height:1.6;margin-top:0">Hello ${escapeHtml(name)},</p><p style="font-size:16px;line-height:1.6">The Professionals Electric team received your request and will review the information you provided.</p><h2 style="font-size:19px;margin:24px 0 8px">Request details</h2><p style="font-size:16px;line-height:1.6"><strong>Reference:</strong> ${reference}<br><strong>Service:</strong> ${escapeHtml(service)}</p><p style="font-size:16px;line-height:1.6">If you need to add information, reply to this email or call <a href="tel:6577745017" style="color:#6d4a0b">657-774-5017</a>.</p><p style="font-size:14px;line-height:1.5;color:#555;margin-bottom:0">For active fire, smoke, or immediate danger, contact emergency services first.</p></div></div></body></html>`,
+        text: `Hello ${name},\n\nThe Professionals Electric team received your request and will review the information you provided.\n\nReference: ${reference}\nService: ${service}\n\nTo add information, reply to this email or call 657-774-5017.\n\nFor active fire, smoke, or immediate danger, contact emergency services first.`
+      }, `customer-confirmation/${submissionId}`);
+
+      lead.customerConfirmation = customerResult.error
+        ? { status: 'failed', attemptedAt: new Date().toISOString(), error: cleanText(customerResult.error.message || customerResult.error.name || 'Email service error', 300) }
+        : { status: 'sent', sentAt: new Date().toISOString(), emailId: cleanText(customerResult.data?.id, 120) };
+    }
+
+    await saveLead(lead, true);
+    console.log(JSON.stringify({ level: 'info', msg: 'lead_received', route: '/api/submit-request', requestId: requestId(request), reference: submissionId.slice(0, 8).toUpperCase(), teamNotification: lead.teamNotification.status, customerConfirmation: lead.customerConfirmation.status, photoCount: photos.length, ms: Date.now() - startedAt }));
+
     return response.status(200).json({ ok: true, reference: submissionId.slice(0, 8).toUpperCase() });
   } catch (error) {
-    console.error('Lead submission error', error);
+    console.error(JSON.stringify({ level: 'error', msg: 'lead_submission_failed', route: '/api/submit-request', requestId: requestId(request), error: error?.message || String(error), ms: Date.now() - startedAt }));
     return response.status(500).json({ error: error?.message || 'The request could not be sent. Please call 657-774-5017.' });
   }
 }

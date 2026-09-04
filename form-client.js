@@ -33,6 +33,7 @@ function startEstimateForm() {
   const progress = form.querySelector('[data-upload-progress]');
   const status = form.querySelector('[data-form-status]');
   const submitButton = form.querySelector('[data-submit-button]');
+  const serviceArea = new URLSearchParams(location.search).get('city') || '';
 
   function setStatus(message, kind = '') {
     status.textContent = message;
@@ -119,6 +120,8 @@ function startEstimateForm() {
         urgent: fields.get('urgent'),
         projectTiming: fields.get('project-timing'),
         bestContactTime: fields.get('best-contact-time'),
+        serviceArea,
+        sourcePage: location.pathname,
         termsAccepted: fields.get('terms-accepted'),
         photos: uploadedPhotos
       };
@@ -132,6 +135,7 @@ function startEstimateForm() {
       if (!result.ok) throw new Error(data.error || 'The request could not be sent. Please call 657-774-5017.');
 
       recordSubmission();
+      window.peTrack?.('form_success');
       setStatus(`Request sent. Reference ${data.reference}.`, 'success');
       form.setAttribute('aria-busy', 'false');
       location.assign(`thanks.html?ref=${encodeURIComponent(data.reference || '')}`);

@@ -1,0 +1,46 @@
+name: Website monitor
+
+on:
+  schedule:
+    - cron: '17,47 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: professionals-electric-site-monitor
+  cancel-in-progress: true
+
+jobs:
+  check-site:
+    runs-on: ubuntu-latest
+    env:
+      SITE: https://professionalselectric.com
+    steps:
+      - name: Check public website
+        shell: bash
+        run: |
+          set -euo pipefail
+          home="$(curl --fail --silent --show-error --location --max-time 20 "$SITE/")"
+          contact="$(curl --fail --silent --show-error --location --max-time 20 "$SITE/contact.html")"
+          health="$(curl --fail --silent --show-error --location --max-time 20 "$SITE/api/health")"
+          missing_code="$(curl --silent --output /tmp/missing.html --write-out '%{http_code}' --max-time 20 "$SITE/monitor-check-not-found")"
+
+          grep -q 'Professionals Electric' <<<"$home"
+          grep -q 'Request Electrical Service' <<<"$contact"
+          grep -q '"ok":true' <<<"$health"
+          test "$missing_code" = '404'
+          grep -q 'That page is not connected' /tmp/missing.html
+
+      - name: Open one issue when a check fails
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          existing="$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search 'in:title [Monitor] Professionals Electric website check failed' --json number --jq 'length')"
+          if [ "$existing" = '0' ]; then
+            gh issue create --repo "$GITHUB_REPOSITORY" --title '[Monitor] Professionals Electric website check failed' --body "The scheduled website check failed. Review the workflow run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          fi

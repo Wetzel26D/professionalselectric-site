@@ -7,8 +7,8 @@
     "build:form": "esbuild form-client.js --bundle --minify --outfile=form-client.min.js"
   },
   "dependencies": {
-    "@vercel/blob": "^2.0.0",
-    "resend": "^6.0.0"
+    "@vercel/blob": "^2.8.0",
+    "resend": "^6.26.0"
   },
   "devDependencies": {
     "esbuild": "^0.25.0"

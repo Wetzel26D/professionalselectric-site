@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /admin-leads.html
+Disallow: /api/admin/
 
 Sitemap: https://professionalselectric.com/sitemap.xml

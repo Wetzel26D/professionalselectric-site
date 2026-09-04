@@ -14,6 +14,11 @@
     'about.html': ['_DSC7048.webp', '_DSC7046.webp', '_DSC6895.webp', '_DSC7004.webp', '_DSC7024.webp', '_DSC7056.webp'],
     'contact.html': ['_DSC7042.webp', '_DSC6947.webp', '_DSC6960.webp', '_DSC7004.webp', '_DSC7024.webp', '_DSC7056.webp'],
     'service-areas.html': ['_DSC7024.webp', '_DSC6960.webp', '_DSC7004.webp', '_DSC7042.webp', '_DSC6991.webp', '_DSC7056.webp'],
+    'anaheim-electrician.html': ['_DSC6960.webp', '_DSC7004.webp', '_DSC6838.webp', '_DSC7024.webp', '_DSC7048.webp', '_DSC7056.webp'],
+    'orange-electrician.html': ['_DSC7004.webp', '_DSC6947.webp', '_DSC6975.webp', '_DSC7021.webp', '_DSC7042.webp', '_DSC7051.webp'],
+    'irvine-electrician.html': ['_DSC7024.webp', '_DSC6960.webp', '_DSC6991.webp', '_DSC7004.webp', '_DSC7046.webp', '_DSC7056.webp'],
+    'costa-mesa-electrician.html': ['_DSC6975.webp', '_DSC6988.webp', '_DSC7004.webp', '_DSC7024.webp', '_DSC7042.webp', '_DSC7051.webp'],
+    'huntington-beach-electrician.html': ['_DSC7056.webp', '_DSC7042.webp', '_DSC7004.webp', '_DSC7013.webp', '_DSC7024.webp', '_DSC6960.webp'],
     'project-highlights.html': ['_DSC6838.webp', '_DSC6906.webp', '_DSC6975.webp', '_DSC7024.webp', '_DSC7048.webp', '_DSC7056.webp']
   };
 
