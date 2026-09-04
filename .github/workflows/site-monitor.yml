@@ -29,7 +29,7 @@ jobs:
           missing_code="$(curl --silent --output /tmp/missing.html --write-out '%{http_code}' --max-time 20 "$SITE/monitor-check-not-found")"
 
           grep -q 'Professionals Electric' <<<"$home"
-          grep -q 'Request Electrical Service' <<<"$contact"
+          grep -q 'Tell our team what you need' <<<"$contact"
           grep -q '"ok":true' <<<"$health"
           test "$missing_code" = '404'
           grep -q 'Wrong circuit' /tmp/missing.html
