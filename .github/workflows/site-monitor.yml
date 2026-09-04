@@ -32,7 +32,7 @@ jobs:
           grep -q 'Request Electrical Service' <<<"$contact"
           grep -q '"ok":true' <<<"$health"
           test "$missing_code" = '404'
-          grep -q 'That page is not connected' /tmp/missing.html
+          grep -q 'Wrong circuit' /tmp/missing.html
 
       - name: Open one issue when a check fails
         if: failure()
